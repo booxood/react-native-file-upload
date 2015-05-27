@@ -1,0 +1,94 @@
+# react-native-file-upload
+
+A file upload plugin for react-native written by Objective-C.
+
+## Getting started
+
+1. `npm install react-native-file-upload --save`
+2. In XCode, in the project navigator, right click `your project` ➜ `Add Files to [your project's name]`
+3. Go to `node_modules` ➜ `react-native-file-upload` and add `FileUpload.m`
+4. Run your project (`Cmd+R`)
+
+## Usage
+
+All you need is to export module `var FileUpload = require('NativeModules').FileUpload;` and direct invoke `FileUpload.upload`.
+
+```javascript
+'use strict';
+
+var React = require('react-native');
+var FileUpload = require('NativeModules').FileUpload;
+
+var {
+  AppRegistry,
+  StyleSheet,
+  Text,
+  View,
+} = React;
+
+var FileUploadDemo = React.createClass({
+  componentDidMount: function() {
+    var obj = {
+        uploadUrl: 'http://127.0.0.1:3000',
+        headers: {
+          'Accept': 'application/json',
+        },
+        fields: {
+            'hello': 'world',
+        },
+        files: [
+          {
+            filename: 'one.w4a', // require, file name
+            filepath: '/xxx/one.w4a', // require, file absoluete path
+            filetype: 'audio/x-m4a', // options, if none, will get mimetype from `filepath` extension
+          },
+        ]
+    };
+    FileUpload.upload(obj, function(err, result) {
+      console.log('upload:', err, result);
+    })
+  },
+  render: function() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.welcome}>
+          Welcome to React Native!
+        </Text>
+        <Text style={styles.instructions}>
+          To get started, edit index.ios.js
+        </Text>
+        <Text style={styles.instructions}>
+          Press Cmd+R to reload,{'\n'}
+          Cmd+D or shake for dev menu
+        </Text>
+      </View>
+    );
+  }
+});
+
+var styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  },
+});
+
+AppRegistry.registerComponent('FileUploadDemo', () => FileUploadDemo);
+```
+
+## License
+
+MIT
+
