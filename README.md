@@ -30,6 +30,7 @@ var FileUploadDemo = React.createClass({
   componentDidMount: function() {
     var obj = {
         uploadUrl: 'http://127.0.0.1:3000',
+        method: 'POST', // default 'POST',support 'POST' and 'PUT'
         headers: {
           'Accept': 'application/json',
         },
@@ -54,13 +55,6 @@ var FileUploadDemo = React.createClass({
         <Text style={styles.welcome}>
           Welcome to React Native!
         </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
       </View>
     );
   }
@@ -78,11 +72,6 @@ var styles = StyleSheet.create({
     textAlign: 'center',
     margin: 10,
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
 });
 
 AppRegistry.registerComponent('FileUploadDemo', () => FileUploadDemo);
@@ -91,4 +80,3 @@ AppRegistry.registerComponent('FileUploadDemo', () => FileUploadDemo);
 ## License
 
 MIT
-
