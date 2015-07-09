@@ -1,5 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <UIKit/UIKit.h>
+#import <AssetsLibrary/AssetsLibrary.h>
 
 #import "RCTBridgeModule.h"
 #import "RCTLog.h"
@@ -69,7 +71,36 @@ RCT_EXPORT_METHOD(upload:(NSDictionary *)obj callback:(RCTResponseSenderBlock)ca
     NSString *filepath = file[@"filepath"];
     NSString *filetype = file[@"filetype"];
 
-    NSData *fileData = [NSData dataWithContentsOfFile:filepath];
+    NSData *fileData = nil;
+
+    NSLog(@"filepath: %@", filepath);
+    if ([filepath hasPrefix:@"assets-library:"]) {
+      NSURL *assetUrl = [[NSURL alloc] initWithString:filepath];
+      ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+
+      __block BOOL isFinished = NO;
+      __block NSData * tempData = nil;
+      [library assetForURL:assetUrl resultBlock:^(ALAsset *asset) {
+        ALAssetRepresentation *rep = [asset defaultRepresentation];
+
+        CGImageRef fullScreenImageRef = [rep fullScreenImage];
+        UIImage *image = [UIImage imageWithCGImage:fullScreenImageRef];
+        tempData = UIImagePNGRepresentation(image);
+        isFinished = YES;
+      } failureBlock:^(NSError *error) {
+        NSLog(@"ALAssetsLibrary assetForURL error:%@", error);
+        isFinished = YES;
+      }];
+      while (!isFinished) {
+          [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01f]];
+      }
+      fileData = tempData;
+    } else if ([filepath hasPrefix:@"data:"] || [filepath hasPrefix:@"file:"]) {
+      NSURL *fileUrl = [[NSURL alloc] initWithString:filepath];
+      fileData = [NSData dataWithContentsOfURL: fileUrl];
+    } else {
+      fileData = [NSData dataWithContentsOfFile:filepath];
+    }
 
     [reqBody appendData:formBoundaryData];
     [reqBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", filename, filename] dataUsingEncoding:NSUTF8StringEncoding]];
@@ -77,7 +108,7 @@ RCT_EXPORT_METHOD(upload:(NSDictionary *)obj callback:(RCTResponseSenderBlock)ca
     if (filetype) {
       [reqBody appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n", filetype] dataUsingEncoding:NSUTF8StringEncoding]];
     } else {
-      [reqBody appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n", [self mimeTypeForPath:filepath]] dataUsingEncoding:NSUTF8StringEncoding]];
+      [reqBody appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n", [self mimeTypeForPath:filename]] dataUsingEncoding:NSUTF8StringEncoding]];
     }
 
     [reqBody appendData:[[NSString stringWithFormat:@"Content-Length: %ld\r\n\r\n", (long)[fileData length]] dataUsingEncoding:NSUTF8StringEncoding]];
