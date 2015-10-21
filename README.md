@@ -42,6 +42,7 @@ var FileUploadDemo = React.createClass({
         },
         files: [
           {
+            name: 'one', // optional, if none then `filename` is used instead
             filename: 'one.w4a', // require, file name
             filepath: '/xxx/one.w4a', // require, file absoluete path
             filetype: 'audio/x-m4a', // options, if none, will get mimetype from `filepath` extension
