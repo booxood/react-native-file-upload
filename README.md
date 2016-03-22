@@ -1,7 +1,8 @@
 # react-native-file-upload  [![NPM version](https://img.shields.io/npm/v/react-native-file-upload.svg?style=flat-square)](https://www.npmjs.com/package/react-native-file-upload)
 
-A file upload plugin for react-native written by Objective-C.
+> React Native latest version had support file upload, the package is **deprecated**, detail see [#4](/../../issues/4) [#7](/../../issues/7).
 
+A file upload plugin for react-native written by Objective-C.
 
 * Support to upload multiple files at a time
 * Support to files and fields
