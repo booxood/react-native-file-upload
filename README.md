@@ -2,6 +2,7 @@
 
 A file upload plugin for react-native written by Objective-C.
 
+
 * Support to upload multiple files at a time
 * Support to files and fields
 
